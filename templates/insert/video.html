@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <title>Encrypt Video</title>
+    </head>
+    <body>
+        <h1>Encrypt Video</h1>
+        <video id="preview_video" width="320" height="240" controls>
+            <source src="Disgaea 5 ost - Moving On -Extended-.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+
+        <form method="POST" action="{{ api_url }}" enctype="multipart/form-data">
+                <p>Select video to be encrypted:</p>
+                <input type="file" name="cover_file" accept=".avi" required> <br>
+                
+                <p>Select file to be hidden in the video:</p>
+                <input type="file" name="hidden_file" required> <br>
+
+                <p>Enter encryption key (max. 25 characters)</p>
+                <input type="text" maxlength="25" name="key" required> <br>
+
+                <input type="radio" name="lsb_type" value="sequential" required> Sequential
+                <input type="radio" name="lsb_type" value="random"> random <br>
+
+                <input type="checkbox" name="randomized_aspects" value="frame"> Random frame
+                <input type="checkbox" name="randomized_aspects" value="byte"> Random pixel <br>
+                <input type="submit" value="submit_encryption">
+        </form>
+    </body>
+</html>
