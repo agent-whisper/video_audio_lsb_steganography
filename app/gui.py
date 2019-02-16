@@ -2,6 +2,8 @@ import tkinter as tk
 import app.pages.mainmenu as mainmenu
 import app.pages.video.insertion as vid_insert
 import app.pages.video.extraction as vid_extract
+import app.pages.video.insertion_result as video_ins_result
+import app.pages.video.extraction_result as video_ext_result
 import app.pages.audio.insertion as audio_insert
 import app.pages.audio.extraction as audio_extract
 import app.pages.audio.insertion_result as audio_ins_result
@@ -34,6 +36,20 @@ class App(tk.Tk):
 
     def open_extract_vid_form(self):
         self.replace_frame(vid_extract.VideoExtractionForm)
+
+    def open_hide_video_result(self, result):
+        new_frame = video_ins_result.VideoInsertionResult(self, result)
+        if self._frame is not None:
+            self._frame.destroy()
+        self._frame = new_frame
+        self._frame.place(relx=0.5, y=48, anchor=tk.N)
+
+    def open_extract_video_result(self, result):
+        new_frame = video_ext_result.VideoExtractionResult(self, result)
+        if self._frame is not None:
+            self._frame.destroy()
+        self._frame = new_frame
+        self._frame.place(relx=0.5, y=48, anchor=tk.N)
 
     # AUDIO
     def open_hide_audio_form(self):

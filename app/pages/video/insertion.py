@@ -47,7 +47,7 @@ class VideoInsertionForm(tk.Frame):
         self.render_lsb_options_frame()
         
         # Tombol Eksekusi dan kembali
-        execute_button = tk.Button(self, text='Eksekusi')
+        execute_button = tk.Button(self, text='Eksekusi', command=lambda: self.execute(master))
         execute_button.grid(row=self.OPTIONS_ROW+1, column=0)
         return_button = tk.Button(self, text='Kembali', command=lambda: master.open_main_menu())
         return_button.grid(row=self.OPTIONS_ROW+1, column=1)
@@ -129,3 +129,10 @@ class VideoInsertionForm(tk.Frame):
             )
             b.grid(row=row_offset, column=1, sticky=tk.W)
             row_offset += 1
+
+    def execute(self, master):
+        result = {
+            'result' : 'debug',
+            'output_dir' : '/home/fariz/Documents/kuliah/semester8/kripto/tubes1/flame.avi',
+        }
+        master.open_hide_video_result(result)
