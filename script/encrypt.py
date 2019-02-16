@@ -1,4 +1,4 @@
-from function2 import *
+from video_lsb import *
 import math
 
 key = "ferdi"
@@ -11,30 +11,28 @@ info_image = video_to_image('../video/test3.avi')
 
 
 # contoh input text
-message = "ferdi ghozali keren"
+message = "ferdi ghozali"
 extension_message = 'plain'
 byte_message = ''.join('{0:08b}'.format(ord(x)) for x in vigenere_encrypt(message, key))
 
 # # contoh input file
-file_name = 'input.png'
-extension_message = ''
-for character_idx in range (len(file_name)-1, -1, -1) :
-	if (file_name[character_idx] == '.') :
-		break
-	extension_message = file_name[character_idx] + extension_message
+# file_name = 'input.png'
+# extension_message = ''
+# for character_idx in range (len(file_name)-1, -1, -1) :
+# 	if (file_name[character_idx] == '.') :
+# 		break
+# 	extension_message = file_name[character_idx] + extension_message
+# ord_bytes = []
+# message = ''
+# with open(file_name, "rb") as input:
+# 	while True :
+# 		word = input.read(1)
+# 		if (word == b'') :
+# 			break
+# 		ord_bytes.append(word)
+# 		message = message + chr(ord(word))
 
-
-ord_bytes = []
-message = ''
-with open(file_name, "rb") as input:
-	while True :
-		word = input.read(1)
-		if (word == b'') :
-			break
-		ord_bytes.append(word)
-		message = message + chr(ord(word))
-
-byte_message = ''.join('{0:08b}'.format(ord(x)) for x in ord_bytes)
+# byte_message = ''.join('{0:08b}'.format(ord(x)) for x in ord_bytes)
 
 
 
@@ -71,7 +69,7 @@ frame_range = (0, info_image['total_image'])
 pixel_per_image = info_image['width'] * info_image['height']
 
 print(key_int, need_pixel, need_frame, frame_sequencial, pixel_sequencial, pixel_range, frame_range, pixel_per_image)
-pixel_order = generate_random(key_int, need_pixel, need_frame, frame_sequencial, pixel_sequencial, pixel_range, frame_range, pixel_per_image)
+pixel_order = generate_random_order_pixel(key_int, need_pixel, need_frame, frame_sequencial, pixel_sequencial, pixel_range, frame_range, pixel_per_image)
 temp_pixel_order = pixel_order
 
 steganography(info_image, pixel_order, byte_message, byte_per_pixel, lsm_byte)

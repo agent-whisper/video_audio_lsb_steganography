@@ -1,4 +1,4 @@
-from function2 import *
+from video_lsb import *
 
 key = "ferdi"
 
@@ -23,11 +23,11 @@ frame_range = (0, info_image['total_image'])
 pixel_per_image = info_image['width'] * info_image['height']
 need_pixel = int(need_pixel)
 need_frame = int(need_frame)
-pixel_order = generate_random(key_int, need_pixel, need_frame, frame_sequencial, pixel_sequencial, pixel_range, frame_range, pixel_per_image)
-len_message, len_total_message, extension, range_message = get_extension_len_message(info_image, pixel_order, byte_per_pixel, lsm_byte)
+pixel_order = generate_random_order_pixel(key_int, need_pixel, need_frame, frame_sequencial, pixel_sequencial, pixel_range, frame_range, pixel_per_image)
+ledcn_message, len_total_message, extension, range_message = get_extension_len_message(info_image, pixel_order, byte_per_pixel, lsm_byte)
 need_pixel = math.ceil(len_total_message / (byte_per_pixel * lsm_byte))
 print(key_int, need_pixel, need_frame, frame_sequencial, pixel_sequencial, pixel_range, frame_range, pixel_per_image)
-pixel_order = generate_random(key_int, need_pixel, need_frame, frame_sequencial, pixel_sequencial, pixel_range, frame_range, pixel_per_image)
+pixel_order = generate_random_order_pixel(key_int, need_pixel, need_frame, frame_sequencial, pixel_sequencial, pixel_range, frame_range, pixel_per_image)
 pixel_order = np.array(pixel_order)
 print(range_message)
 message = steganoanalytic(info_image, pixel_order, byte_per_pixel, lsm_byte, range_message)

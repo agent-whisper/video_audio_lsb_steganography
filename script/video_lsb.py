@@ -181,7 +181,7 @@ import random
 import math
 import numpy as np
 
-def generate_random(seed, need_pixel, need_frame, frame_sequencial, pixel_sequencial, pixel_range, frame_range, pixel_per_image) :
+def generate_random_order_pixel(seed, need_pixel, need_frame, frame_sequencial, pixel_sequencial, pixel_range, frame_range, pixel_per_image) :
 	random.seed(seed)
 	pixel_order = np.array([])
 	if ((not frame_sequencial) and (not pixel_sequencial)) :
