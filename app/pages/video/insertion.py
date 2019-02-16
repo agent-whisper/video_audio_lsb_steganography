@@ -7,11 +7,11 @@ import vlc
 class VideoInsertionForm(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        LSB_MODES = [
+        self.LSB_MODES = [
             ('Sequential', 'seq'),
             ('Randomized', 'ran'),
         ]
-        RANDOM_OPTIONS = [
+        self.RANDOM_OPTIONS = [
             ('Byte'),
             ('Frame'),
         ]
@@ -41,33 +41,11 @@ class VideoInsertionForm(tk.Frame):
         key_entry.grid(row=self.KEY_ENTRY_ROW, column=1)
 
         # Opsi untuk mode LSB
-        options_frame = tk.Frame(self)
-        options_frame.grid(row=self.OPTIONS_ROW, column=0, sticky=tk.W+tk.E)
-        lsb_mode = tk.StringVar()
-        lsb_mode.set('seq')
-        row_offset = 0
-        for label, mode in LSB_MODES:
-            b = tk.Radiobutton(
-                master=options_frame,
-                text=label,
-                variable=lsb_mode,
-                value=mode
-            )
-            b.grid(row=row_offset, column=0, sticky=tk.W)
-            row_offset += 1
-
-        rand_options = {}
-        row_offset = 0
-        for label in RANDOM_OPTIONS:
-            rand_options[label] = tk.StringVar()
-            b = tk.Checkbutton(
-                master=options_frame,
-                text=label,
-                variable=rand_options[label]
-            )
-            b.grid(row=row_offset, column=1, sticky=tk.W)
-            row_offset += 1
-
+        self.lsb_mode = tk.StringVar()
+        self.lsb_mode.set('seq')
+        self.rand_options = {}
+        self.render_lsb_options_frame()
+        
         # Tombol Eksekusi dan kembali
         execute_button = tk.Button(self, text='Eksekusi')
         execute_button.grid(row=self.OPTIONS_ROW+1, column=0)
@@ -126,3 +104,28 @@ class VideoInsertionForm(tk.Frame):
             print(e)
         finally:
             player.stop()
+
+    def render_lsb_options_frame(self):
+        options_frame = tk.Frame(self)
+        options_frame.grid(row=self.OPTIONS_ROW, column=0, sticky=tk.W+tk.E)
+        row_offset = 0
+        for label, mode in self.LSB_MODES:
+            b = tk.Radiobutton(
+                master=options_frame,
+                text=label,
+                variable=self.lsb_mode,
+                value=mode
+            )
+            b.grid(row=row_offset, column=0, sticky=tk.W)
+            row_offset += 1
+
+        row_offset = 0
+        for label in self.RANDOM_OPTIONS:
+            self.rand_options[label] = tk.StringVar()
+            b = tk.Checkbutton(
+                master=options_frame,
+                text=label,
+                variable=self.rand_options[label]
+            )
+            b.grid(row=row_offset, column=1, sticky=tk.W)
+            row_offset += 1

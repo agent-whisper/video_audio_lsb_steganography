@@ -1,7 +1,7 @@
 import tkinter as tk
 import app.pages.mainmenu as mainmenu
-import app.pages.video as video
-
+import app.pages.video.insertion as vid_insert
+import app.pages.video.extraction as vid_extract
 class App(tk.Tk):
     def __init__(self, title='window', width='600', height='600', resizable=True):
         tk.Tk.__init__(self)
@@ -17,7 +17,10 @@ class App(tk.Tk):
         self.replace_frame(mainmenu.MainMenu)
     
     def open_hide_vid_form(self):
-        self.replace_frame(video.VideoInsertionForm)
+        self.replace_frame(vid_insert.VideoInsertionForm)
+
+    def open_extract_vid_form(self):
+        self.replace_frame(vid_extract.VideoExtractionForm)
 
     def replace_frame(self, frame_class):
         new_frame = frame_class(self)
