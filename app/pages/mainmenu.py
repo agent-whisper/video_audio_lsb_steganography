@@ -10,7 +10,11 @@ class MainMenu(tk.Frame):
             text='Sembunyikan Pesan ke Video',
             command=lambda: master.open_hide_vid_form()
         )
-        ext_vid_button = tk.Button(self, text='Ekstrak Pesan dari Video')
+        ext_vid_button = tk.Button(
+            self,
+            text='Ekstrak Pesan dari Video',
+            command=lambda: master.open_extract_vid_form()
+        )
         ins_vid_button.grid(row=1, column=0, sticky=tk.W)
         ext_vid_button.grid(row=1, column=1, sticky=tk.W)
 
