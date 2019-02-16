@@ -1,15 +1,15 @@
 import tkinter as tk
-import app.pages.mainmenu as mainmenu
-import app.pages.video.insertion as vid_insert
-import app.pages.video.extraction as vid_extract
-import app.pages.video.insertion_result as video_ins_result
-import app.pages.video.extraction_result as video_ext_result
-import app.pages.audio.insertion as audio_insert
-import app.pages.audio.extraction as audio_extract
-import app.pages.audio.insertion_result as audio_ins_result
-import app.pages.audio.extraction_result as audio_ext_result
+import src.pages.mainmenu as mainmenu
+import src.pages.video.insertion as vid_insert
+import src.pages.video.extraction as vid_extract
+import src.pages.video.insertion_result as video_ins_result
+import src.pages.video.extraction_result as video_ext_result
+import src.pages.audio.insertion as audio_insert
+import src.pages.audio.extraction as audio_extract
+import src.pages.audio.insertion_result as audio_ins_result
+import src.pages.audio.extraction_result as audio_ext_result
 
-class App(tk.Tk):
+class SteganographyApp(tk.Tk):
     def __init__(self, title='window', width='800', height='600', resizable=True):
         tk.Tk.__init__(self)
         self.title('Tugas Besar 1')
