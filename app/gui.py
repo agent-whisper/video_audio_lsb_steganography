@@ -3,7 +3,7 @@ import app.pages.mainmenu as mainmenu
 import app.pages.video as video
 
 class App(tk.Tk):
-    def __init__(self, title='window', width='500', height='300', resizable=True):
+    def __init__(self, title='window', width='600', height='600', resizable=True):
         tk.Tk.__init__(self)
         self.title('Tugas Besar 1')
         window_width = str(width)
@@ -24,4 +24,4 @@ class App(tk.Tk):
         if self._frame is not None:
             self._frame.destroy()
         self._frame = new_frame
-        self._frame.place(relx=0.5, y=96, anchor=tk.CENTER)
+        self._frame.place(relx=0.5, rely=0.1, y=96, anchor=tk.CENTER)
