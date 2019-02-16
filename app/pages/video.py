@@ -28,7 +28,7 @@ class VideoInsertionForm(tk.Frame):
         cv_dialog_frame.grid(row=COVER_FILE_ROW, column=0, columnspan=2, sticky=tk.W+tk.E)
         tk.Label(master=cv_dialog_frame, text='Cover Video:').grid(row=0, sticky=tk.W)
         cv_input_label = tk.Label(master=cv_dialog_frame, textvariable=self.cover_file_dir)
-        cv_input_label.grid(row=1, sticky=tk.W)
+        cv_input_label.grid(row=1, columnspan=2, sticky=tk.W)
         pick_cv_button = tk.Button(
             master=cv_dialog_frame,
             text='Pilih',
@@ -49,7 +49,7 @@ class VideoInsertionForm(tk.Frame):
         msg_dialog_frame.grid(row=SECRET_MESSAGE_ROW, column=0, columnspan=2, sticky=tk.W+tk.E)
         tk.Label(master=msg_dialog_frame, text='Berkas Rahasia:').grid(row=0, sticky=tk.W)
         msg_input_label = tk.Label(master=msg_dialog_frame, textvariable=self.secret_message_dir)
-        msg_input_label.grid(row=1, sticky=tk.W)
+        msg_input_label.grid(row=1, columnspan=2, sticky=tk.W)
         pick_msg_button = tk.Button(
             master=msg_dialog_frame,
             text='Pilih',

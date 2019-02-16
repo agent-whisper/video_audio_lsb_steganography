@@ -24,4 +24,4 @@ class App(tk.Tk):
         if self._frame is not None:
             self._frame.destroy()
         self._frame = new_frame
-        self._frame.place(relx=0.5, rely=0.1, y=96, anchor=tk.CENTER)
+        self._frame.place(relx=0.5, y=48, anchor=tk.N)
