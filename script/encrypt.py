@@ -7,7 +7,7 @@ lsm_byte = 1
 frame_sequencial = True
 pixel_sequencial = False
 
-info_image = video_to_image('../video/test3.avi')
+info_image = video_to_image('../example_video/test3.avi')
 
 
 # contoh input text
