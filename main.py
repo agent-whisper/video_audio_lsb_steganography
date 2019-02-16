@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import tkinter as tk
-from app import App
+from app.gui import App
 
 mw = App(title='Tugas Besar 1')
 # mw.title('Tugas Besar 1')

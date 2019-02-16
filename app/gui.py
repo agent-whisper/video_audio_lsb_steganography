@@ -1,6 +1,6 @@
 import tkinter as tk
-
-from pages.mainmenu import MainMenu
+import app.pages.mainmenu as mainmenu
+import app.pages.video as video
 
 class App(tk.Tk):
     def __init__(self, title='window', width='500', height='300', resizable=True):
@@ -9,13 +9,19 @@ class App(tk.Tk):
         window_width = str(width)
         window_height= str(height)
         self.geometry('{}x{}'.format(window_width,window_height))
-        
-        self._frame = None
-        self.switch_frame(MainMenu)
 
-    def switch_frame(self, frame_class):
+        self._frame = None
+        self.open_main_menu()
+
+    def open_main_menu(self):
+        self.replace_frame(mainmenu.MainMenu)
+    
+    def open_hide_vid_form(self):
+        self.replace_frame(video.VideoInsertionForm)
+
+    def replace_frame(self, frame_class):
         new_frame = frame_class(self)
         if self._frame is not None:
             self._frame.destroy()
         self._frame = new_frame
-        self._frame.place(relx=0.5, rely=0.1, y=48, anchor=tk.CENTER)
+        self._frame.place(relx=0.5, y=96, anchor=tk.CENTER)
