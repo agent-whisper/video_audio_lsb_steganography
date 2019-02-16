@@ -25,7 +25,11 @@ class AudioExtractionForm(tk.Frame):
         key_entry.grid(row=self.KEY_ENTRY_ROW, column=1)
 
         # Tombol Eksekusi dan kembali
-        execute_button = tk.Button(self, text='Eksekusi')
+        execute_button = tk.Button(
+            self,
+            text='Eksekusi',
+            command=lambda: self.execute(master),
+        )
         execute_button.grid(row=self.KEY_ENTRY_ROW+1, column=0)
         return_button = tk.Button(self, text='Kembali', command=lambda: master.open_main_menu())
         return_button.grid(row=self.KEY_ENTRY_ROW+1, column=1)
@@ -66,3 +70,10 @@ class AudioExtractionForm(tk.Frame):
             print(e)
         finally:
             player.stop()
+
+    def execute(self, master):
+        result = {
+            'result' : 'debug',
+            'output_dir' : '/home/fariz/Documents/kuliah/semester8/kripto/tubes1/Yamaha-V50-Rock-Beat-120bpm.wav',
+        }
+        master.open_extract_audio_result(result)
