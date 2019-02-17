@@ -1,5 +1,6 @@
 import time
 
+import src.steganography.video.lsb as vlsb
 import tkinter as tk
 import tkinter.filedialog as tkfd
 import vlc
@@ -8,12 +9,12 @@ class VideoInsertionForm(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
         self.LSB_MODES = [
-            ('Sequential', 'seq'),
-            ('Randomized', 'ran'),
+            ('1 bit', 1),
+            ('2 bit', 2),
         ]
         self.RANDOM_OPTIONS = [
-            ('Byte'),
-            ('Frame'),
+            ('Random Pixel'),
+            ('Random Frame'),
         ]
         self.TITLE_ROW = 0
         self.COVER_FILE_ROW = 1
@@ -41,13 +42,16 @@ class VideoInsertionForm(tk.Frame):
         key_entry.grid(row=self.KEY_ENTRY_ROW, column=1)
 
         # Opsi untuk mode LSB
-        self.lsb_mode = tk.StringVar()
-        self.lsb_mode.set('seq')
+        self.lsb_mode = tk.IntVar()
+        self.lsb_mode.set(1)
         self.rand_options = {}
+        for mode in self.RANDOM_OPTIONS:
+            self.rand_options[mode] = tk.IntVar()
+            self.rand_options[mode].set(0)
         self.render_lsb_options_frame()
         
         # Tombol Eksekusi dan kembali
-        execute_button = tk.Button(self, text='Eksekusi', command=lambda: self.execute(master))
+        execute_button = tk.Button(self, text='Eksekusi', command=lambda: self.execute(master, key_entry.get()))
         execute_button.grid(row=self.OPTIONS_ROW+1, column=0)
         return_button = tk.Button(self, text='Kembali', command=lambda: master.open_main_menu())
         return_button.grid(row=self.OPTIONS_ROW+1, column=1)
@@ -108,6 +112,7 @@ class VideoInsertionForm(tk.Frame):
     def render_lsb_options_frame(self):
         options_frame = tk.Frame(self)
         options_frame.grid(row=self.OPTIONS_ROW, column=0, sticky=tk.W+tk.E)
+
         row_offset = 0
         for label, mode in self.LSB_MODES:
             b = tk.Radiobutton(
@@ -118,10 +123,11 @@ class VideoInsertionForm(tk.Frame):
             )
             b.grid(row=row_offset, column=0, sticky=tk.W)
             row_offset += 1
-
+        
         row_offset = 0
         for label in self.RANDOM_OPTIONS:
-            self.rand_options[label] = tk.StringVar()
+            if label not in self.rand_options:
+                self.rand_options[label] = tk.IntVar()
             b = tk.Checkbutton(
                 master=options_frame,
                 text=label,
@@ -130,9 +136,27 @@ class VideoInsertionForm(tk.Frame):
             b.grid(row=row_offset, column=1, sticky=tk.W)
             row_offset += 1
 
-    def execute(self, master):
-        result = {
-            'result' : 'debug',
-            'output_dir' : '/home/fariz/Documents/kuliah/semester8/kripto/tubes1/flame.avi',
-        }
+    def execute(self, master, key):
+        # result = {
+        #     'result' : 'debug',
+        #     'output_dir' : '/home/fariz/Documents/kuliah/semester8/kripto/tubes1/flame.avi',
+        # }
+        if self.cover_file_dir == '' or self.secret_message_dir == '' or key == '':
+            return
+
+        print('--- Executing Video LSB Insertion ---')
+        print('Cover file: {}'.format(self.cover_file_dir.get()))
+        print('Secret file: {}'.format(self.secret_message_dir.get()))
+        print('LSB mode: {} bit'.format(self.lsb_mode.get()))
+        print('Random Pixel: {}'.format(self.rand_options['Random Pixel'].get()))
+        print('Random Frame: {}'.format(self.rand_options['Random Frame'].get()))
+        result = vlsb.hide_secret(
+            self.cover_file_dir.get(),
+            self.secret_message_dir.get(),
+            key,
+            'video_insertion_result.avi',
+            self.lsb_mode.get(),
+            is_seq_frame=not(self.rand_options['Random Frame'].get()),
+            is_seq_pixel=not(self.rand_options['Random Pixel'].get()),
+        )
         master.open_hide_video_result(result)
