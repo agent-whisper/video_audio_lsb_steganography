@@ -36,14 +36,18 @@ def hide_message(cover_file_dir, secret_message_dir, key, output_filename, is_ra
     }
     return result
 
-def extract_message(stegano_audio_dir, key, output_filename='audio_extraction_result'):
+def extract_message(stegano_audio_dir, key, output_filename):
     d = audio_ext.MessageExtractor()
     filebytes = d.read_encrypted_file(stegano_audio_dir)
     lsb = d.get_lsb(filebytes,key)
     length, ext = d.get_info_message(lsb)
-    d.write_secret_message(length, ext, lsb, output_filename)
+    complete_output_filename = '{}'.format(output_filename)
+    if ext != '':
+        complete_output_filename += '.' + ext
+
+    d.write_secret_message(length, ext, lsb, complete_output_filename)
     result = {
         'result' : 'success',
-        'output_dir' : '{}/{}.{}'.format(os.getcwd(), output_filename, ext),
+        'output_dir' : '{}/{}'.format(os.getcwd(), complete_output_filename),
     }
     return result
