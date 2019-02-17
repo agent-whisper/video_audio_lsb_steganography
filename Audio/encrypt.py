@@ -28,6 +28,9 @@ class Encrypt:
 
     # Insert message
     def insert_message(self, extension, encrypted, randomize_bytes, randomize_frames, message, frame, key, opt=1):
+        if not self.check_payload(message, frame):
+            print("panjang message terlalu besar")
+            return
         len_message = str(len(message))
         string = len_message + '#' + extension + '#' + message
         key = key.upper()
@@ -100,3 +103,11 @@ class Encrypt:
         with wave.open(filename + '.wav', 'wb') as fd:
             fd.setparams(params)
             fd.writeframes(frame)
+
+    # Check payload size
+    def check_payload(self, message, frame_bytes):
+        max_size = len(frame_bytes) * 4
+        ok = False if len(message) > max_size else True
+
+        return ok
+            
