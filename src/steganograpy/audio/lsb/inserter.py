@@ -21,7 +21,11 @@ class MessageInserter:
     
     # Read included message file
     def read_files(self, file):
-        ext = file.split(".")[-1]
+        is_ext = file.split("/")[-1].find(".")
+        if is_ext:
+            ext = file.split(".")[-1]
+        else:
+            ext = ""
         with open(file, "rb") as f:
             byte_file = f.read()
         return (byte_file, ext)
