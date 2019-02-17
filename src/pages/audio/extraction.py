@@ -1,5 +1,6 @@
 import time
 
+import src.steganograpy.audio.lsb.api as alsb_api
 import tkinter as tk
 import tkinter.filedialog as tkfd
 import vlc
@@ -28,7 +29,7 @@ class AudioExtractionForm(tk.Frame):
         execute_button = tk.Button(
             self,
             text='Eksekusi',
-            command=lambda: self.execute(master),
+            command=lambda: self.execute(master, key_entry.get()),
         )
         execute_button.grid(row=self.KEY_ENTRY_ROW+1, column=0)
         return_button = tk.Button(self, text='Kembali', command=lambda: master.open_main_menu())
@@ -71,9 +72,18 @@ class AudioExtractionForm(tk.Frame):
         finally:
             player.stop()
 
-    def execute(self, master):
-        result = {
-            'result' : 'debug',
-            'output_dir' : '/home/fariz/Documents/kuliah/semester8/kripto/tubes1/Yamaha-V50-Rock-Beat-120bpm.wav',
-        }
+    def execute(self, master, key):
+        # result = {
+        #     'result' : 'debug',
+        #     'output_dir' : '/home/fariz/Documents/kuliah/semester8/kripto/tubes1/Yamaha-V50-Rock-Beat-120bpm.wav',
+        # }
+        if self.audio_dir.get() == '' or key == '':
+            return
+
+        result = alsb_api.extract_message(
+            self.audio_dir.get(),
+            key,
+            'audio_extraction_result'
+        )
+
         master.open_extract_audio_result(result)
