@@ -100,6 +100,6 @@ class MessageExtractor:
         bytes_file = decoded.encode('utf-8')
         bytes_file = base64.b64decode(bytes_file)
         
-        with open(outputname + '.' + ext, 'wb') as fd:
+        with open(outputname, 'wb') as fd:
             fd.write(bytes_file)
 
