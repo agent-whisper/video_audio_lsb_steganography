@@ -25,15 +25,16 @@ class VideoInsertionResult(tk.Frame):
             if output_result['result'] == 'failed':
                 tk.Label(master=rr_frame, text='Penyembunyian gagal [result:{}]'.format(output_result['result'])).grid(row=0, column=0)
             else:
-                tk.Label(master=rr_frame, text='Penyembunyian berhasil [result:{}]'.format(output_result['result'])).grid(row=0, column=0)
-                tk.Label(master=rr_frame, text='Lokasi output:').grid(row=1, column=0, sticky=tk.W)
-                tk.Label(master=rr_frame, text=output_result['output_dir']).grid(row=1, column=1, sticky=tk.W)
+                tk.Label(master=rr_frame, text='Penyembunyian berhasil [result:{}]'.format(output_result['result'])).grid(row=0, column=0, columnspan=2, sticky=tk.W)
+                tk.Label(master=rr_frame, text='Nilai PNSR: {}'.format(output_result['psnr'])).grid(row=1, column=0, columnspan=2, sticky=tk.W)
+                tk.Label(master=rr_frame, text='Lokasi output:').grid(row=2, column=0, sticky=tk.W)
+                tk.Label(master=rr_frame, text=output_result['output_dir']).grid(row=2, column=1, sticky=tk.W)
                 preview_result_button = tk.Button(
                     master=rr_frame,
                     text='Buka Video',
                     command=lambda: self.play_video(output_result['output_dir'])
                 )
-                preview_result_button.grid(row=2, column=0, sticky=tk.W)
+                preview_result_button.grid(row=3, column=0, sticky=tk.W)
         except KeyError as e:
             tk.Label(master=rr_frame, text='Output Result Key Error!').grid(row=0, column=0)
             print(e)
