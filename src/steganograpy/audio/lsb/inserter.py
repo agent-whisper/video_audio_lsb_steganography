@@ -21,7 +21,7 @@ class MessageInserter:
     
     # Read included message file
     def read_files(self, file):
-        is_ext = file.split("/")[-1].find(".")
+        is_ext = file.split("/")[-1].find(".") != -1
         if is_ext:
             ext = file.split(".")[-1]
         else:

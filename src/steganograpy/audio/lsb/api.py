@@ -28,7 +28,7 @@ def hide_message(cover_file_dir, secret_message_dir, key, output_filename, is_ra
             'result' : 'failed',
         }
         return result
-
+    output_filename += ('.wav')
     e.write_file(output_filename, frame_modified, params)
     result = {
         'result' : 'success',
@@ -44,7 +44,7 @@ def extract_message(stegano_audio_dir, key, output_filename):
     complete_output_filename = '{}'.format(output_filename)
     if ext != '':
         complete_output_filename += '.' + ext
-
+    print(ext)
     d.write_secret_message(length, ext, lsb, complete_output_filename)
     result = {
         'result' : 'success',
