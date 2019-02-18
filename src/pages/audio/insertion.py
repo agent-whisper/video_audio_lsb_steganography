@@ -31,6 +31,7 @@ class AudioInsertionForm(tk.Frame):
         # Input cover file dan playback
         self.cover_file_dir = tk.StringVar()
         self.cover_file_dir.set('')
+        self.is_mono = False
         self.render_cover_file_frame()
 
         # Input lokasi file rahasia
@@ -53,6 +54,8 @@ class AudioInsertionForm(tk.Frame):
             self.rand_options[mode].set(0)
         self.use_encryption = tk.IntVar()
         self.use_encryption.set(0)
+        self.options_frame = tk.Frame(self)
+        self.options_buttons = {}
         self.render_lsb_options_frame()
         
         # Entri untuk nama file output
@@ -108,6 +111,13 @@ class AudioInsertionForm(tk.Frame):
         self.cover_file_dir.set(tkfd.askopenfilename(filetypes=(
             (".WAV Audio", "*.wav"),
         )))
+        self.is_mono = (alsb_api.check_is_mono(self.cover_file_dir.get()) == 1)
+        if (self.is_mono):
+            self.rand_options['Random Byte'].set(0)
+            self.options_buttons['Random Byte'].config(state=tk.DISABLED)
+        else:
+            self.rand_options['Random Byte'].set(0)
+            self.options_buttons['Random Byte'].config(state=tk.NORMAL)
 
     def load_secret_message(self):
         self.secret_message_dir.set(tkfd.askopenfilename())
@@ -126,37 +136,35 @@ class AudioInsertionForm(tk.Frame):
             player.stop()
 
     def render_lsb_options_frame(self):
-        options_frame = tk.Frame(self)
-        options_frame.grid(row=self.OPTIONS_ROW, column=0, sticky=tk.W+tk.E)
-
+        self.options_frame.grid(row=self.OPTIONS_ROW, column=0, sticky=tk.W+tk.E)
         row_offset = 0
         for label, mode in self.LSB_MODES:
-            b = tk.Radiobutton(
-                master=options_frame,
+            self.options_buttons[label] = tk.Radiobutton(
+                master=self.options_frame,
                 text=label,
                 variable=self.lsb_bit_mode,
                 value=mode
             )
-            b.grid(row=row_offset, column=0, sticky=tk.W)
+            self.options_buttons[label].grid(row=row_offset, column=0, sticky=tk.W)
             row_offset += 1
         
         row_offset = 0
         for label in self.RANDOM_OPTIONS:
             if label not in self.rand_options:
                 self.rand_options[label] = tk.IntVar()
-            b = tk.Checkbutton(
-                master=options_frame,
+            self.options_buttons[label] = tk.Checkbutton(
+                master=self.options_frame,
                 text=label,
                 variable=self.rand_options[label]
             )
-            b.grid(row=row_offset, column=1, sticky=tk.W)
+            self.options_buttons[label].grid(row=row_offset, column=1, sticky=tk.W)
             row_offset += 1
-        b = tk.Checkbutton(
-            master=options_frame,
+        self.options_buttons['Encrypt'] = tk.Checkbutton(
+            master=self.options_frame,
             text='Encrypt message',
             variable=self.use_encryption
         )
-        b.grid(row=row_offset, column=1, sticky=tk.W)
+        self.options_buttons['Encrypt'].grid(row=row_offset, column=1, sticky=tk.W)
 
     def execute(self, master, key, output_filename):
         # result = {

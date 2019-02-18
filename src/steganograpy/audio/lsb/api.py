@@ -51,3 +51,8 @@ def extract_message(stegano_audio_dir, key, output_filename):
         'output_dir' : '{}/{}'.format(os.getcwd(), complete_output_filename),
     }
     return result
+
+def check_is_mono(stegano_audio_dir):
+    d = audio_ins.MessageInserter()
+    param = d.get_params(stegano_audio_dir)
+    return (param[0] == 1)
