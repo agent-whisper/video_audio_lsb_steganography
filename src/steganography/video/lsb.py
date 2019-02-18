@@ -137,7 +137,7 @@ def extract_secret(stegano_video_dir, key, output_file_name):
   
   output_result = {
     'result' : 'success',
-    'output_dir' : '{}/{}.{}'.format(os.getcwd(), output_file_name, extension),
+    'output_dir' : '{}/{}'.format(os.getcwd(), output_file_name),
   }
   return output_result
 
