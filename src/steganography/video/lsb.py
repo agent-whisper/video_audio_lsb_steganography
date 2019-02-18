@@ -92,7 +92,7 @@ def hide_secret(cover_video_dir, secret_msg_dir, key, output_file_name, lsm_byte
   }
   return output_result
 
-def extract_secret(stegano_video_dir, key, output_file_name='video_extraction_result'):
+def extract_secret(stegano_video_dir, key, output_file_name):
   info_image = utils.video_to_image(stegano_video_dir, EXTRACT_TEMP_FOLDER)
   image_index = 0
   is_seq_frame, is_seq_pixel, lsm_byte = extract_config(image_index, EXTRACT_TEMP_FOLDER)
@@ -124,7 +124,9 @@ def extract_secret(stegano_video_dir, key, output_file_name='video_extraction_re
     for i in range (0,len(message) // 8) :
       a = message[i*8:i*8 + 8]
       plain.append(int(a, 2))
-    with open('{}.'.format(output_file_name) + extension,'wb') as f:
+    if extension != '':
+      output_file_name += '.' + extension
+    with open(output_file_name,'wb') as f:
         f.write(bytearray(plain))
   utils.remove(EXTRACT_TEMP_FOLDER)
   
