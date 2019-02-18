@@ -7,6 +7,7 @@ import vlc
 
 class VideoInsertionForm(tk.Frame):
     def __init__(self, master):
+        self.DEFAULT_OUT_FILENAME = 'video_insertion_result'
         tk.Frame.__init__(self, master)
         self.LSB_MODES = [
             ('1 bit', 1),
@@ -21,6 +22,8 @@ class VideoInsertionForm(tk.Frame):
         self.SECRET_MESSAGE_ROW = 2
         self.KEY_ENTRY_ROW = 3
         self.OPTIONS_ROW = 4
+        self.SAVEAS_ROW = 5
+        self.EXECUTE_ROW = 6
 
         # Judul Halaman
         tk.Label(self, text='Steganografi Video', font='none 24 bold').grid(row=self.TITLE_ROW, columnspan=2, sticky=tk.W+tk.E)
@@ -48,13 +51,26 @@ class VideoInsertionForm(tk.Frame):
         for mode in self.RANDOM_OPTIONS:
             self.rand_options[mode] = tk.IntVar()
             self.rand_options[mode].set(0)
+        self.is_encrypt = tk.IntVar()
+        self.is_encrypt.set(0)
         self.render_lsb_options_frame()
         
+        # Entri untuk nama file output
+        self.output_filename = tk.StringVar()
+        self.output_filename.set(self.DEFAULT_OUT_FILENAME)
+        saveas_dialog_frame = tk.Frame(self)
+        saveas_dialog_frame.grid(row=self.SAVEAS_ROW, column=0, columnspan=2, sticky=tk.W+tk.E)
+        tk.Label(master=saveas_dialog_frame, text='Save as:').grid(row=0, column=0, columnspan=2, sticky=tk.W)
+        saveas_entry = tk.Entry(master=saveas_dialog_frame)
+        saveas_entry.grid(row=1, column=0, sticky=tk.W)
+        saveas_entry.insert(tk.END, self.DEFAULT_OUT_FILENAME)
+        tk.Label(master=saveas_dialog_frame, text='.avi').grid(row=1, column=1, sticky=tk.W)
+
         # Tombol Eksekusi dan kembali
-        execute_button = tk.Button(self, text='Eksekusi', command=lambda: self.execute(master, key_entry.get()))
-        execute_button.grid(row=self.OPTIONS_ROW+1, column=0)
+        execute_button = tk.Button(self, text='Eksekusi', command=lambda: self.execute(master, key_entry.get(), saveas_entry.get()))
+        execute_button.grid(row=self.EXECUTE_ROW, column=0)
         return_button = tk.Button(self, text='Kembali', command=lambda: master.open_main_menu())
-        return_button.grid(row=self.OPTIONS_ROW+1, column=1)
+        return_button.grid(row=self.EXECUTE_ROW, column=1)
     
     def render_cover_file_frame(self):
         cv_dialog_frame = tk.Frame(self)
@@ -135,13 +151,21 @@ class VideoInsertionForm(tk.Frame):
             )
             b.grid(row=row_offset, column=1, sticky=tk.W)
             row_offset += 1
+        
+        b = tk.Checkbutton(
+            master=options_frame,
+            text='Encrypt secret message',
+            variable=self.is_encrypt,
+        )
+        b.grid(row=row_offset, column=1, sticky=tk.W)
+        row_offset += 1
 
-    def execute(self, master, key):
+    def execute(self, master, key, output_filename):
         # result = {
         #     'result' : 'debug',
         #     'output_dir' : '/home/fariz/Documents/kuliah/semester8/kripto/tubes1/flame.avi',
         # }
-        if self.cover_file_dir == '' or self.secret_message_dir == '' or key == '':
+        if self.cover_file_dir == '' or self.secret_message_dir == '' or key == '' or output_filename == '':
             return
 
         print('--- Executing Video LSB Insertion ---')
@@ -154,7 +178,7 @@ class VideoInsertionForm(tk.Frame):
             self.cover_file_dir.get(),
             self.secret_message_dir.get(),
             key,
-            'video_insertion_result.avi',
+            (output_filename + '.avi'),
             self.lsb_mode.get(),
             is_seq_frame=not(self.rand_options['Random Frame'].get()),
             is_seq_pixel=not(self.rand_options['Random Pixel'].get()),
