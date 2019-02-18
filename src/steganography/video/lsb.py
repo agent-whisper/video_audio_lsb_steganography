@@ -13,7 +13,7 @@ HIDE_OUTPUT_FOLDER = 'steganography_output'
 EXTRACT_TEMP_FOLDER = 'steganoanalysis_temp'
 EXTRACT_OUTPUT_FOLDER = 'steganoanalysis_output'
 
-def hide_secret(cover_video_dir, secret_msg_dir, key, output_file_name, lsm_byte, is_seq_frame=True, is_seq_pixel=True):
+def hide_secret(cover_video_dir, secret_msg_dir, key, output_file_name, lsm_byte, is_seq_frame=True, is_seq_pixel=True, is_encrypted=False):
   # Load the cover video
   info_image = utils.video_to_image(cover_video_dir, HIDE_TEMP_FOLDER)
 
@@ -36,7 +36,7 @@ def hide_secret(cover_video_dir, secret_msg_dir, key, output_file_name, lsm_byte
   message_in_bytes = ''.join('{0:08b}'.format(ord(x)) for x in ord_bytes)
 
   len_message = len(message_in_bytes)
-  extra_message = str(len_message) + '|' + message_extension + '|'
+  extra_message = str(int(is_encrypted)) + str(len_message) + '|' + message_extension + '|'
   # print(extra_message)
   extra_message = ''.join('{0:08b}'.format(ord(x)) for x in extra_message)
 
@@ -97,7 +97,7 @@ def extract_secret(stegano_video_dir, key, output_file_name):
   image_index = 0
   is_seq_frame, is_seq_pixel, lsm_byte = extract_config(image_index, EXTRACT_TEMP_FOLDER)
   seed_from_key = generate_seed(key)
-
+  print(is_seq_frame, is_seq_pixel, lsm_byte)
   need_pixel = 240
   need_frame = math.ceil(need_pixel / (info_image['width'] * info_image['height']))
   pixel_range = (0, info_image['width']*info_image['height']*info_image['total_image'])
@@ -106,7 +106,7 @@ def extract_secret(stegano_video_dir, key, output_file_name):
   need_pixel = int(need_pixel)
   need_frame = int(need_frame)
   pixel_order = utils.generate_random_order_pixel(seed_from_key, need_pixel, need_frame, is_seq_frame, is_seq_pixel, pixel_range, frame_range, pixel_per_image)
-  len_message, len_total_message, extension, range_message = get_extension_len_message(info_image, pixel_order, BYTE_PER_PIXEL, lsm_byte, EXTRACT_TEMP_FOLDER)
+  is_encrypted, len_message, len_total_message, extension, range_message = get_extension_len_message(info_image, pixel_order, BYTE_PER_PIXEL, lsm_byte, EXTRACT_TEMP_FOLDER)
   need_pixel = math.ceil(len_total_message / (BYTE_PER_PIXEL * lsm_byte))
   
   pixel_order = utils.generate_random_order_pixel(seed_from_key, need_pixel, need_frame, is_seq_frame, is_seq_pixel, pixel_range, frame_range, pixel_per_image)
@@ -228,21 +228,22 @@ def get_extension_len_message(info_image, pixel_order, byte_per_pixel, lsm_byte,
           is_extension = False
           len_total_message = len(plain) * 8 + len_message
         if (is_len) :
-          len_message = int(plain[:-1])
+          is_encrypted = (int(plain[0]) == 1)
+          len_message = int(plain[1:-1])
           extension_idx = len(plain)
           is_len = False
           is_extension = True
     if (not(is_extension) and not(is_len)) :
       range_message = (extension_idx*8, (extension_idx*8)+len_message)
       break
-  return(len_message, len_total_message, extension, range_message)
+  return(is_encrypted, len_message, len_total_message, extension, range_message)
 
 def extract_config(image_index, temp_folder) :
   image = cv2.imread(temp_folder + "/" + str(image_index) + ".png", 1 )
   int_lsb = image[0,0]
   byte_lsb = ['{0:08b}'.format(x) for x in int_lsb]
-  frame_sequencial = ((byte_lsb[0])[-3] == '1')
-  pixel_sequencial = ((byte_lsb[1])[-3] == '1')
+  frame_sequencial = (str(byte_lsb[0])[-3] == '1')
+  pixel_sequencial = (str(byte_lsb[1])[-3] == '1')
   lsm_byte = int(str((byte_lsb[2])[-3])) + 1
   return(frame_sequencial, pixel_sequencial, lsm_byte)
 
@@ -257,14 +258,16 @@ def save_config(image_index, frame_sequencial, pixel_sequencial, lsm_byte, temp_
     byte_lsb[0] = byte_lsb[0] + '1' + third_byte
   else :
     byte_lsb[0] = byte_lsb[0] + '0' + third_byte
+  
   third_byte = byte_lsb[1][-2:]
   byte_lsb[1] = byte_lsb[1][:-3]
   if (pixel_sequencial) :
     byte_lsb[1] = byte_lsb[1] + '1' + third_byte
   else :
     byte_lsb[1] = byte_lsb[1] + '0' + third_byte
+  
   third_byte = byte_lsb[2][-2:]
-  byte_lsb[1] = byte_lsb[2][:-3]
+  byte_lsb[2] = byte_lsb[2][:-3]
   if (lsm_byte == 2) :
     byte_lsb[2] = byte_lsb[2] + '1' + third_byte
   else :
