@@ -6,6 +6,8 @@ from subprocess import call,STDOUT
 
 import numpy as np
 import src.steganography.video.utilities as utils
+import src.utilities.ext_vigenere as vig_cipher
+import src.utilities.cipher_utils as vig_utils
 
 BYTE_PER_PIXEL = 3
 HIDE_TEMP_FOLDER = 'steganography_temp'
@@ -117,6 +119,11 @@ def extract_secret(stegano_video_dir, key, output_file_name):
   pixel_order = utils.generate_random_order_pixel(seed_from_key, need_pixel, need_frame, is_seq_frame, is_seq_pixel, pixel_range, frame_range, pixel_per_image)
   pixel_order = np.array(pixel_order)
   message = apply_steganoanalytic(info_image, pixel_order, BYTE_PER_PIXEL, lsm_byte, range_message, EXTRACT_TEMP_FOLDER)
+
+  # if is_encrypted:
+  #     message = vig_cipher.ExtendedVigenere().decipher(message, key)
+  print('Is encrypted: {}'.format(is_encrypted))
+  temp_msg_name = 'vid_temp_dec'
   if (extension == 'plain') :
     plain = ''
     for i in range (0,len(message) // 8) :
@@ -131,7 +138,19 @@ def extract_secret(stegano_video_dir, key, output_file_name):
       plain.append(int(a, 2))
     if extension != '':
       output_file_name += '.' + extension
-    with open(output_file_name,'wb') as f:
+      temp_msg_name += '.' + extension
+    if (is_encrypted):
+      print('extension: {}'.format(extension))
+      print(output_file_name)
+      print(temp_msg_name)
+      with open(temp_msg_name,'wb') as f:
+        f.write(bytearray(plain))
+      encrypted_secret_message = vig_utils.read_input_bytes(temp_msg_name)
+      real_secret_message = vig_cipher.ExtendedVigenere().decipher(encrypted_secret_message, key)
+      vig_utils.save_output_bytes(real_secret_message, output_file_name)
+      # os.remove(temp_msg_name)
+    else:
+      with open(output_file_name, 'wb') as f:
         f.write(bytearray(plain))
   utils.remove(EXTRACT_TEMP_FOLDER)
   

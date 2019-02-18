@@ -92,4 +92,5 @@ class VideoExtractionForm(tk.Frame):
         print('Video file: {}'.format(self.video_dir.get()))
         print('Key: {}'.format(key))
         result = vlsb.extract_secret(self.video_dir.get(), key, output_filename)
+        print('Extraction finished!')
         master.open_extract_video_result(result)

@@ -1,9 +1,14 @@
+import os
 import time
 
 import src.steganography.video.lsb as vlsb
+import src.steganography.audio.lsb.tools as tools
 import tkinter as tk
 import tkinter.filedialog as tkfd
 import vlc
+
+import src.utilities.ext_vigenere as vig_cipher
+import src.utilities.cipher_utils as vig_utils
 
 class VideoInsertionForm(tk.Frame):
     def __init__(self, master):
@@ -174,13 +179,29 @@ class VideoInsertionForm(tk.Frame):
         print('LSB mode: {} bit'.format(self.lsb_mode.get()))
         print('Random Pixel: {}'.format(self.rand_options['Random Pixel'].get()))
         print('Random Frame: {}'.format(self.rand_options['Random Frame'].get()))
+        print('Encrypt Message: {}'.format(self.is_encrypt.get()))
+
+        temp_file_name = 'vid_enc_temp'
+        if (self.is_encrypt.get()):
+            has_extension = self.secret_message_dir.get().split('/')[-1].find('.') != -1
+            if has_extension:
+                temp_file_name += '.' + self.secret_message_dir.get().split('.')[-1]
+            msg_plain_text = vig_utils.read_input_bytes(self.secret_message_dir.get())
+            encryptor = vig_cipher.ExtendedVigenere()
+            cipher_text = encryptor.encipher(msg_plain_text, key)
+            vig_utils.save_output_bytes(cipher_text, temp_file_name)
+
         result = vlsb.hide_secret(
             self.cover_file_dir.get(),
-            self.secret_message_dir.get(),
+            (self.secret_message_dir.get() if not self.is_encrypt.get() else temp_file_name),
             key,
             (output_filename + '.avi'),
             self.lsb_mode.get(),
             is_seq_frame=not(self.rand_options['Random Frame'].get()),
             is_seq_pixel=not(self.rand_options['Random Pixel'].get()),
+            is_encrypted=self.is_encrypt.get()
         )
+        # if (self.is_encrypt.get()):
+        #     os.remove(temp_file_name)
+        print('Insertion finished!')
         master.open_hide_video_result(result)
