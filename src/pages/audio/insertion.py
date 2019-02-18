@@ -2,7 +2,7 @@ import time
 
 import tkinter as tk
 import tkinter.filedialog as tkfd
-import src.steganograpy.audio.lsb.api as alsb_api
+import src.steganography.audio.lsb.api as alsb_api
 import vlc
 
 class AudioInsertionForm(tk.Frame):

@@ -1,7 +1,7 @@
 import wave
 import random
 import base64
-import src.steganograpy.audio.lsb.tools as tools
+import src.steganography.audio.lsb.tools as tools
 
 class MessageExtractor:
     # Read encrypted file as bytes

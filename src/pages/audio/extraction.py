@@ -1,6 +1,6 @@
 import time
 
-import src.steganograpy.audio.lsb.api as alsb_api
+import src.steganography.audio.lsb.api as alsb_api
 import tkinter as tk
 import tkinter.filedialog as tkfd
 import vlc

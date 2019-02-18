@@ -1,8 +1,8 @@
 import base64
 import os
 
-import src.steganograpy.audio.lsb.inserter as audio_ins
-import src.steganograpy.audio.lsb.extractor as audio_ext
+import src.steganography.audio.lsb.inserter as audio_ins
+import src.steganography.audio.lsb.extractor as audio_ext
 
 def hide_message(cover_file_dir, secret_message_dir, key, output_filename, is_random_byte, is_random_frame, lsb_bit_mode, encrypt):
     e = audio_ins.MessageInserter()

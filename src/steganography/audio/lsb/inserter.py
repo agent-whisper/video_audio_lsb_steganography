@@ -1,7 +1,7 @@
 # Using wave to read wav file
 import wave
 import random
-import src.steganograpy.audio.lsb.tools as tools
+import src.steganography.audio.lsb.tools as tools
 
 class MessageInserter:
     # Read bytes per frame
