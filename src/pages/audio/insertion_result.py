@@ -25,7 +25,7 @@ class AudioInsertionResult(tk.Frame):
             if output_result['result'] == 'failed':
                 tk.Label(master=rr_frame, text='Penyembunyian gagal [result:{}]'.format(output_result['result'])).grid(row=0, column=0)
             else:
-                tk.Label(master=rr_frame, text='Penyembunyian berhasil [result:{}]'.format(output_result['result'])).grid(row=0, column=0)
+                tk.Label(master=rr_frame, text='Penyembunyian berhasil [result:{}]'.format(output_result['result'])).grid(row=0, column=0, columnspan=2, sticky=tk.W)
                 tk.Label(master=rr_frame, text='Lokasi output:').grid(row=1, column=0, sticky=tk.W)
                 tk.Label(master=rr_frame, text=output_result['output_dir']).grid(row=1, column=1, sticky=tk.W)
                 preview_result_button = tk.Button(
