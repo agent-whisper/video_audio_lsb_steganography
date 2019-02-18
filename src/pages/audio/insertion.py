@@ -184,6 +184,6 @@ class AudioInsertionForm(tk.Frame):
             self.lsb_bit_mode.get(),
             self.use_encryption.get()
         )
-
+        print('Insertion Finished!')
         master.open_hide_audio_result(result)
         

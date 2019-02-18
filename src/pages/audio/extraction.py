@@ -99,5 +99,5 @@ class AudioExtractionForm(tk.Frame):
             key,
             output_filename,
         )
-
+        print('Extraction Finished!')
         master.open_extract_audio_result(result)
