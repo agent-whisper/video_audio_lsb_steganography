@@ -8,9 +8,13 @@ import vlc
 class AudioExtractionForm(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
+
+        self.DEFAULT_OUT_FILENAME = 'audio_extraction_result'
         self.TITLE_ROW = 0
         self.SELECT_AUDIO_ROW = 1
         self.KEY_ENTRY_ROW = 2
+        self.SAVEAS_ROW = 3
+        self.EXECUTE_ROW = 4
 
         tk.Label(self, text='Ekstraksi Audio', font='none 24 bold').grid(row=self.TITLE_ROW, column=1, columnspan=2, sticky=tk.W+tk.E)
         
@@ -25,15 +29,25 @@ class AudioExtractionForm(tk.Frame):
         key_entry = tk.Entry(self)
         key_entry.grid(row=self.KEY_ENTRY_ROW, column=1)
 
+        # Entri untuk nama file output
+        self.output_filename = tk.StringVar()
+        self.output_filename.set(self.DEFAULT_OUT_FILENAME)
+        saveas_dialog_frame = tk.Frame(self)
+        saveas_dialog_frame.grid(row=self.SAVEAS_ROW, column=0, columnspan=2, sticky=tk.W+tk.E)
+        tk.Label(master=saveas_dialog_frame, text='Nama file output (tanpa ekstensi):').grid(row=0, column=0, columnspan=2, sticky=tk.W)
+        saveas_entry = tk.Entry(master=saveas_dialog_frame)
+        saveas_entry.grid(row=1, column=0, sticky=tk.W)
+        saveas_entry.insert(tk.END, self.DEFAULT_OUT_FILENAME)
+
         # Tombol Eksekusi dan kembali
         execute_button = tk.Button(
             self,
             text='Eksekusi',
-            command=lambda: self.execute(master, key_entry.get()),
+            command=lambda: self.execute(master, key_entry.get(), saveas_entry.get()),
         )
-        execute_button.grid(row=self.KEY_ENTRY_ROW+1, column=0)
+        execute_button.grid(row=self.EXECUTE_ROW, column=0)
         return_button = tk.Button(self, text='Kembali', command=lambda: master.open_main_menu())
-        return_button.grid(row=self.KEY_ENTRY_ROW+1, column=1)
+        return_button.grid(row=self.EXECUTE_ROW, column=1)
 
     def render_file_select_frame(self):
         select_vid_dialog_frame = tk.Frame(self)
@@ -72,18 +86,18 @@ class AudioExtractionForm(tk.Frame):
         finally:
             player.stop()
 
-    def execute(self, master, key):
+    def execute(self, master, key, output_filename):
         # result = {
         #     'result' : 'debug',
         #     'output_dir' : '/home/fariz/Documents/kuliah/semester8/kripto/tubes1/Yamaha-V50-Rock-Beat-120bpm.wav',
         # }
-        if self.audio_dir.get() == '' or key == '':
+        if self.audio_dir.get() == '' or key == '' or output_filename == '':
             return
 
         result = alsb_api.extract_message(
             self.audio_dir.get(),
             key,
-            'audio_extraction_result'
+            output_filename,
         )
 
         master.open_extract_audio_result(result)

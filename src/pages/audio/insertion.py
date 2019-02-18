@@ -16,11 +16,14 @@ class AudioInsertionForm(tk.Frame):
             ('Random Byte'),
             ('Random Frame'),
         ]
+        self.DEFAULT_OUT_FILENAME = 'audio_insertion_result'
         self.TITLE_ROW = 0
         self.COVER_FILE_ROW = 1
         self.SECRET_MESSAGE_ROW = 2
         self.KEY_ENTRY_ROW = 3
         self.OPTIONS_ROW = 4
+        self.SAVEAS_ROW = 5
+        self.EXECUTE_ROW = 6
 
         # Judul Halaman
         tk.Label(self, text='Steganografi Audio', font='none 24 bold').grid(row=self.TITLE_ROW, columnspan=2, sticky=tk.W+tk.E)
@@ -52,11 +55,22 @@ class AudioInsertionForm(tk.Frame):
         self.use_encryption.set(0)
         self.render_lsb_options_frame()
         
+        # Entri untuk nama file output
+        self.output_filename = tk.StringVar()
+        self.output_filename.set(self.DEFAULT_OUT_FILENAME)
+        saveas_dialog_frame = tk.Frame(self)
+        saveas_dialog_frame.grid(row=self.SAVEAS_ROW, column=0, columnspan=2, sticky=tk.W+tk.E)
+        tk.Label(master=saveas_dialog_frame, text='Nama file output:').grid(row=0, column=0, columnspan=2, sticky=tk.W)
+        saveas_entry = tk.Entry(master=saveas_dialog_frame)
+        saveas_entry.grid(row=1, column=0, sticky=tk.W)
+        saveas_entry.insert(tk.END, self.DEFAULT_OUT_FILENAME)
+        tk.Label(master=saveas_dialog_frame, text='.wav').grid(row=1, column=1, sticky=tk.W)
+
         # Tombol Eksekusi dan kembali
-        execute_button = tk.Button(self, text='Eksekusi', command=lambda: self.execute(master, key_entry.get()))
-        execute_button.grid(row=self.OPTIONS_ROW+1, column=0)
+        execute_button = tk.Button(self, text='Eksekusi', command=lambda: self.execute(master, key_entry.get(), saveas_entry.get()))
+        execute_button.grid(row=self.EXECUTE_ROW, column=0)
         return_button = tk.Button(self, text='Kembali', command=lambda: master.open_main_menu())
-        return_button.grid(row=self.OPTIONS_ROW+1, column=1)
+        return_button.grid(row=self.EXECUTE_ROW, column=1)
     
     def render_cover_file_frame(self):
         ca_dialog_frame = tk.Frame(self)
@@ -144,19 +158,19 @@ class AudioInsertionForm(tk.Frame):
         )
         b.grid(row=row_offset, column=1, sticky=tk.W)
 
-    def execute(self, master, key):
+    def execute(self, master, key, output_filename):
         # result = {
         #     'result' : 'debug',
         #     'output_dir' : '/home/fariz/Documents/kuliah/semester8/kripto/tubes1/Yamaha-V50-Rock-Beat-120bpm.wav',
         # }
-        if self.cover_file_dir.get() == '' or self.secret_message_dir.get() == '' or key == '':
+        if self.cover_file_dir.get() == '' or self.secret_message_dir.get() == '' or key == '' or output_filename == '':
             return
 
         result = alsb_api.hide_message(
             self.cover_file_dir.get(),
             self.secret_message_dir.get(),
             key,
-            'audio_insertion_result.wav',
+            output_filename,
             self.rand_options['Random Byte'].get(),
             self.rand_options['Random Frame'].get(),
             self.lsb_bit_mode.get(),
