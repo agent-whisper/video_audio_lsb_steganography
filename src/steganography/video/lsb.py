@@ -23,6 +23,9 @@ def hide_secret(cover_video_dir, secret_msg_dir, key, output_file_name, lsm_byte
     if (secret_msg_dir[character_idx] == '.') :
       break
     message_extension = secret_msg_dir[character_idx] + message_extension
+    if (character_idx == 0) :
+      message_extension = ''
+      break
   # Load the secret message
   ord_bytes = []
   message = ''
@@ -77,7 +80,8 @@ def hide_secret(cover_video_dir, secret_msg_dir, key, output_file_name, lsm_byte
   )
 
   # Start steganography process
-  apply_steganography(info_image, pixel_order, message_in_bytes, BYTE_PER_PIXEL, lsm_byte, HIDE_TEMP_FOLDER)
+  psnr = apply_steganography(info_image, pixel_order, message_in_bytes, BYTE_PER_PIXEL, lsm_byte, HIDE_TEMP_FOLDER)
+  print(psnr)
   try :
     os.mkdir(HIDE_OUTPUT_FOLDER)
   except OSError:
@@ -87,6 +91,7 @@ def hide_secret(cover_video_dir, secret_msg_dir, key, output_file_name, lsm_byte
   utils.remove(HIDE_TEMP_FOLDER)
 
   output_result = {
+    'psnr' : '{}'.format(psnr),
     'result': 'success',
     'output_dir': '{}/{}/{}'.format(os.getcwd(), HIDE_OUTPUT_FOLDER, output_file_name)
   }
@@ -143,6 +148,7 @@ def generate_seed(key):
   return seed_from_key
 
 def apply_steganography(info_image, pixel_order, byte_message, byte_per_pixel, lsm_byte, temp_folder) :
+  rms = 0
   for message_idx in range (0, len(byte_message),lsm_byte*byte_per_pixel) :
     # print(message_idx)
     message = ''
@@ -160,21 +166,33 @@ def apply_steganography(info_image, pixel_order, byte_message, byte_per_pixel, l
     img_idx = int(img_idx)
     height_img = int(height_img)
     width_img = int(width_img)
-    change_lsb(img_idx, height_img, width_img, message, byte_per_pixel, lsm_byte, temp_folder)
+    delta_intensity = change_lsb(img_idx, height_img, width_img, message, byte_per_pixel, lsm_byte, temp_folder)
+    rms += delta_intensity
+  rms = math.sqrt(rms/(info_image['total_image'] * info_image['width'] * info_image['height']))
+  psnr = 20 * math.log10(256/rms)
+  # rms_point = rms_point / 
+  return (psnr)
 
 def change_lsb(image_index, height_img, width_img, byte_message, byte_per_pixel, lsm_byte, temp_folder) :
   image = cv2.imread(temp_folder + "/" + str(image_index) + ".png", 1 )
   int_lsb = image[height_img, width_img]
-
+  init_int_lsb = int_lsb
   byte_lsb = ['{0:08b}'.format(x) for x in int_lsb]
   for byte in range (0, byte_per_pixel) :
     byte_lsb[byte] = (byte_lsb[byte])[:-1*(lsm_byte)]
     byte_lsb[byte] = byte_lsb[byte] + byte_message[:lsm_byte]
     byte_message = byte_message[lsm_byte:]
   int_lsb = tuple([int(x, 2) for x in byte_lsb])
-  
+  delta_intensity = 0
+  intensity_after = 0
+  intensity_before = 0
+  for rgb_idx in range (0, len(int_lsb)) :
+    intensity_after += int_lsb[rgb_idx]
+    intensity_before += init_int_lsb[rgb_idx]
+  delta_intensity = ((intensity_after/3) - (intensity_before/3))**2
   image[height_img, width_img] = int_lsb
   cv2.imwrite(temp_folder + "/" + str(image_index) + ".png",image)
+  return(delta_intensity)
 
 def apply_steganoanalytic(info_image, pixel_order, byte_per_pixel, lsm_byte, range_message, temp_folder) :
   message = ''
