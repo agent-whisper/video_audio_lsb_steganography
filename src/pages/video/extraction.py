@@ -33,9 +33,10 @@ class VideoExtractionForm(tk.Frame):
         self.output_filename.set(self.DEFAULT_OUT_FILENAME)
         saveas_dialog_frame = tk.Frame(self)
         saveas_dialog_frame.grid(row=self.SAVEAS_ROW, column=0, columnspan=2, sticky=tk.W+tk.E)
-        tk.Label(master=saveas_dialog_frame, text='Save as:').grid(row=0, column=0, columnspan=2, sticky=tk.W)
+        tk.Label(master=saveas_dialog_frame, text='Nama file output (tanpa ekstensi):').grid(row=0, column=0, columnspan=2, sticky=tk.W)
         saveas_entry = tk.Entry(master=saveas_dialog_frame)
         saveas_entry.grid(row=1, column=0, columnspan=2, sticky=tk.W)
+        saveas_entry.insert(tk.END, self.DEFAULT_OUT_FILENAME)
 
         # Tombol Eksekusi dan kembali
         execute_button = tk.Button(self, text='Eksekusi', command=lambda: self.execute(master, key_entry.get(), saveas_entry.get()))
