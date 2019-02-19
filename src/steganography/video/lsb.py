@@ -56,6 +56,8 @@ def hide_secret(cover_video_dir, secret_msg_dir, key, output_file_name, lsm_byte
 
   # Message size validation
   max_information_per_image = info_image['width'] * info_image['height'] * BYTE_PER_PIXEL * lsm_byte
+  print('Max information per frame = {} bit'.format(max_information_per_image))
+  print('Max information in video = {} bit'.format(max_information_per_image * info_image['total_image']))
   is_msg_too_long = (max_information_per_image * info_image['total_image']) < len(message_in_bytes)
   if (is_msg_too_long) :
     print('message too long')
