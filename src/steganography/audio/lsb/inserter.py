@@ -69,7 +69,6 @@ class MessageInserter:
             random.seed(seed)
             frame_list = list(range(len(frame)))
             random.shuffle(frame_list)
-            print(frame_list[0:5])
         else:
             if is_mono:
                 frame[1] = frame[1] & 254 | 0

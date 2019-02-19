@@ -40,7 +40,7 @@ def hide_message(cover_file_dir, secret_message_dir, key, output_filename, is_ra
 def extract_message(stegano_audio_dir, key, output_filename, is_mono):
     d = audio_ext.MessageExtractor()
     filebytes = d.read_encrypted_file(stegano_audio_dir)
-    lsb = d.get_lsb(filebytes,key)
+    lsb = d.get_lsb(filebytes,key,is_mono)
     length, ext = d.get_info_message(lsb)
     complete_output_filename = '{}'.format(output_filename)
     if ext != '':
