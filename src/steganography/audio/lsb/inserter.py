@@ -31,8 +31,8 @@ class MessageInserter:
         return (byte_file, ext)
 
     # Insert message
-    def insert_message(self, extension, message, frame, key, lsb_bit_mode=1, encrypted=False, randomize_bytes=False, randomize_frames=False):
-        if not self.check_payload(message, frame):
+    def insert_message(self, extension, message, frame, key, is_mono, lsb_bit_mode=1, encrypted=False, randomize_bytes=False, randomize_frames=False):
+        if not self.check_payload(message, frame, is_mono):
             print("panjang message terlalu besar")
             return
         len_message = str(len(message))
@@ -109,9 +109,9 @@ class MessageInserter:
             fd.writeframes(frame)
 
     # Check payload size
-    def check_payload(self, message, frame_bytes):
-        max_size = len(frame_bytes) * 4
+    def check_payload(self, message, frame_bytes, is_mono):
+        k = (1 if is_mono else 4)
+        max_size = len(frame_bytes) * k
+        print('Max size: {}'.format(max_size))
         ok = False if len(message) > max_size else True
-
         return ok
-            

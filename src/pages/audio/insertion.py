@@ -182,7 +182,8 @@ class AudioInsertionForm(tk.Frame):
             self.rand_options['Random Byte'].get(),
             self.rand_options['Random Frame'].get(),
             self.lsb_bit_mode.get(),
-            self.use_encryption.get()
+            self.use_encryption.get(),
+            self.is_mono
         )
         print('Insertion Finished!')
         master.open_hide_audio_result(result)

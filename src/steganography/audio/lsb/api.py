@@ -4,7 +4,7 @@ import os
 import src.steganography.audio.lsb.inserter as audio_ins
 import src.steganography.audio.lsb.extractor as audio_ext
 
-def hide_message(cover_file_dir, secret_message_dir, key, output_filename, is_random_byte, is_random_frame, lsb_bit_mode, encrypt):
+def hide_message(cover_file_dir, secret_message_dir, key, output_filename, is_random_byte, is_random_frame, lsb_bit_mode, encrypt, is_mono):
     e = audio_ins.MessageInserter()
     frame_bytes = e.read_frame_file(cover_file_dir)
     params = e.get_params(cover_file_dir)
@@ -18,6 +18,7 @@ def hide_message(cover_file_dir, secret_message_dir, key, output_filename, is_ra
         message,
         frame_bytes,
         key,
+        is_mono,
         lsb_bit_mode=lsb_bit_mode,
         randomize_bytes=is_random_byte,
         randomize_frames=is_random_frame,
