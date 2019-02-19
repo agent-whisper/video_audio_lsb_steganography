@@ -21,6 +21,7 @@ class AudioExtractionForm(tk.Frame):
         # Pilih stego-audio
         self.audio_dir = tk.StringVar()
         self.audio_dir.set('')
+        self.is_mono = False
         self.render_file_select_frame()
 
         # Input Stegano Key
@@ -72,6 +73,7 @@ class AudioExtractionForm(tk.Frame):
         self.audio_dir.set(tkfd.askopenfilename(filetypes=(
             (".WAV Audio", "*.wav"),
         )))
+        self.is_mono = (alsb_api.check_is_mono(self.audio_dir.get()) == 1)
 
     def play_audio(self):
         player = vlc.MediaPlayer(self.audio_dir.get())
@@ -93,11 +95,12 @@ class AudioExtractionForm(tk.Frame):
         # }
         if self.audio_dir.get() == '' or key == '' or output_filename == '':
             return
-
+    
         result = alsb_api.extract_message(
             self.audio_dir.get(),
             key,
             output_filename,
+            self.is_mono
         )
         print('Extraction Finished!')
         master.open_extract_audio_result(result)
