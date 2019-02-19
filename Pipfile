@@ -5,6 +5,9 @@ name = "pypi"
 
 [packages]
 bitarray = "*"
+python-vlc = "*"
+opencv-python = "*"
+pillow = "*"
 
 [dev-packages]
 

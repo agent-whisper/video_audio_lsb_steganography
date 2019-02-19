@@ -1,5 +1,7 @@
 fariz_test/
 
+steganography_output/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
