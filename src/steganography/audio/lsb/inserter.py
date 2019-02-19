@@ -5,10 +5,11 @@ import src.steganography.audio.lsb.tools as tools
 
 class MessageInserter:
     # Read bytes per frame
-    def read_frame_file(self, filename):
+    def read_frame_file(self, filename,is_mono):
         song = wave.open(filename, mode='rb')
         frame_bytes = bytearray(list(song.readframes(song.getnframes())))
-        frame_bytes = tools.split_array(frame_bytes,4)
+        if not is_mono:
+            frame_bytes = tools.split_array(frame_bytes,4)
         song.close()
         return frame_bytes
     
@@ -44,61 +45,101 @@ class MessageInserter:
         
         # Give sign if encrypted
         if encrypted:
-            frame[0][0] = frame[0][0] & 254 | 1
+            if is_mono:
+                frame[0] = frame[0] & 254 | 1
+            else:
+                frame[0][0] = frame[0][0] & 254 | 1
             # encrypt string with key
             string = tools.vigenere_extended(string, key)
         else:
-            frame[0][0] = frame[0][0] & 254 | 0
+            if is_mono:
+                frame[0] = frame[0] & 254 | 0
+            else:
+                frame[0][0] = frame[0][0] & 254 | 0
         
 
         # Convert text to bit array
         bits = list(map(int, ''.join([bin(ord(i)).lstrip('0b').rjust(8,'0') for i in string])))
 
         if randomize_frames:
-            frame[0][1] = frame[0][1] & 254 | 1
+            if is_mono:
+                frame[1] = frame[1] & 254 | 1
+            else:
+                frame[0][1] = frame[0][1] & 254 | 1
             random.seed(seed)
             frame_list = list(range(len(frame)))
             random.shuffle(frame_list)
+            print(frame_list[0:5])
         else:
-            frame [0][1] = frame[0][1] & 254 | 0
+            if is_mono:
+                frame[1] = frame[1] & 254 | 0
+            else:
+                frame [0][1] = frame[0][1] & 254 | 0
             frame_list = list(range(len(frame)))
         
         if randomize_bytes:
-            frame[0][2] = frame[0][2] & 254 | 1
-            random.seed(seed)
-            bytes_list = list(range(len(frame[0])))
-            random.shuffle(bytes_list)
+            if is_mono:
+                frame[2] = frame[2] & 254 | 1
+            else:
+                frame[0][2] = frame[0][2] & 254 | 1
+                bytes_list = list(range(len(frame[0])))
+                random.seed(seed)
+                random.shuffle(bytes_list)
         else:
-            frame[0][2] = frame[0][2] & 254 | 0
-            bytes_list = list(range(len(frame[0])))
+            if is_mono:
+                frame[2] = frame[2] & 254 | 0
+            else:
+                frame[0][2] = frame[0][2] & 254 | 0
+                bytes_list = list(range(len(frame[0])))
         
         index = 0
         if lsb_bit_mode==2:
-            frame[0][3] = frame[0][3] & 254 | 1
-            for i in frame_list:
-                for j in bytes_list:
+            if is_mono:
+                frame[3] = frame[3] & 254 | 1
+                for i in frame_list:
                     if index >= len(bits):
                         break
-                    if i != 0:
-                        frame[i][j] = frame[i][j] & 252 | (2*bits[index] + bits[index+1])
+                    if i >= 4:
+                        frame[i] = frame[i] & 252 | (2*bits[index] + bits[index+1])
                         index += 2
+            else:
+                frame[0][3] = frame[0][3] & 254 | 1
+                for i in frame_list:
+                    for j in bytes_list:
+                        if index >= len(bits):
+                            break
+                        if i != 0:
+                            frame[i][j] = frame[i][j] & 252 | (2*bits[index] + bits[index+1])
+                            index += 2
         else:
-            frame[0][3] = frame[0][3] & 254 | 0
-            for i in frame_list:
-                for j in bytes_list:
+            if is_mono:
+                frame[3] = frame[3] & 254 | 0
+                for i in frame_list:
                     if index >= len(bits):
                         break
-                    if i != 0:
-                        frame[i][j] = frame[i][j] & 252 | bits[index]
+                    if i >= 4:
+                        frame[i] = frame[i] & 254 | bits[index]
                         index+=1
+            else:
+                frame[0][3] = frame[0][3] & 254 | 0
+                for i in frame_list:
+                    for j in bytes_list:
+                        if index >= len(bits):
+                            break
+                        if i != 0:
+                            frame[i][j] = frame[i][j] & 254 | bits[index]
+                            index+=1
 
         frame_modified = bytes()
         merged_array = bytearray()
 
-        for i in frame:
-            merged_array += i
+        if is_mono:
+            merged_array = frame
+        else:
+            for i in frame:
+                merged_array += i
 
-        # Convert to bytes 
+        # Convert to bytes
         frame_modified += bytes(merged_array)
         return frame_modified
 
