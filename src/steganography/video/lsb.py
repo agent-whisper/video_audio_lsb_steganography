@@ -14,10 +14,22 @@ HIDE_TEMP_FOLDER = 'steganography_temp'
 HIDE_OUTPUT_FOLDER = 'steganography_output'
 EXTRACT_TEMP_FOLDER = 'steganoanalysis_temp'
 EXTRACT_OUTPUT_FOLDER = 'steganoanalysis_output'
+AUDIO_TEMP_FOLDER = 'audio_temp'
 
 def hide_secret(cover_video_dir, secret_msg_dir, key, output_file_name, lsm_byte, is_seq_frame=True, is_seq_pixel=True, is_encrypted=False):
   # Load the cover video
+
+  #extractiong image
   info_image = utils.video_to_image(cover_video_dir, HIDE_TEMP_FOLDER)
+
+  #extraction audio
+  try :
+    os.mkdir(AUDIO_TEMP_FOLDER)
+  except OSError:
+    utils.remove(AUDIO_TEMP_FOLDER)
+    os.mkdir(AUDIO_TEMP_FOLDER)
+  audio_file = AUDIO_TEMP_FOLDER + '/audio.wav'
+  call(["ffmpeg", "-i", str(cover_video_dir), "-q:a", "0", "-map", "a", audio_file, "-y"],stdout=open(os.devnull, "w"), stderr=STDOUT)
 
   # Read the extension of secret message
   message_extension = ''
@@ -56,8 +68,6 @@ def hide_secret(cover_video_dir, secret_msg_dir, key, output_file_name, lsm_byte
 
   # Message size validation
   max_information_per_image = info_image['width'] * info_image['height'] * BYTE_PER_PIXEL * lsm_byte
-  print('Max information per frame = {} bit'.format(max_information_per_image))
-  print('Max information in video = {} bit'.format(max_information_per_image * info_image['total_image']))
   is_msg_too_long = (max_information_per_image * info_image['total_image']) < len(message_in_bytes)
   if (is_msg_too_long) :
     print('message too long')
@@ -91,8 +101,13 @@ def hide_secret(cover_video_dir, secret_msg_dir, key, output_file_name, lsm_byte
   except OSError:
     utils.remove(HIDE_OUTPUT_FOLDER)
     os.mkdir(HIDE_OUTPUT_FOLDER)
-  call(["ffmpeg", "-i", "{}/%d.png".format(HIDE_TEMP_FOLDER) , "-r", str(info_image['fps']), "-vcodec", "png", "{}/{}".format(HIDE_OUTPUT_FOLDER, output_file_name), "-y"],stdout=open(os.devnull, "w"), stderr=STDOUT)
+  call(["ffmpeg", "-i", "{}/%d.png".format(HIDE_TEMP_FOLDER), "-r", str(info_image['fps']), "-i", audio_file, "-vcodec", "png", "{}/{}".format(HIDE_OUTPUT_FOLDER, output_file_name), "-y"],stdout=open(os.devnull, "w"), stderr=STDOUT)
+  
+  #add audio to video
+  # call(["ffmpeg", "-i", "{}/temp.avi".format(HIDE_TEMP_FOLDER), "-i", audio_file,  "{}/{}".format(HIDE_OUTPUT_FOLDER, output_file_name), "-vcodec", "copy", "-y"],stdout=open(os.devnull, "w"), stderr=STDOUT)
+  
   utils.remove(HIDE_TEMP_FOLDER)
+  utils.remove(AUDIO_TEMP_FOLDER)
 
   output_result = {
     'psnr' : '{}'.format(psnr),
