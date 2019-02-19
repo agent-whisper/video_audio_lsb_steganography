@@ -168,6 +168,7 @@ def generate_seed(key):
 
 def apply_steganography(info_image, pixel_order, byte_message, byte_per_pixel, lsm_byte, temp_folder) :
   rms = 0
+  changed_img = set([])
   for message_idx in range (0, len(byte_message),lsm_byte*byte_per_pixel) :
     # print(message_idx)
     message = ''
@@ -185,9 +186,10 @@ def apply_steganography(info_image, pixel_order, byte_message, byte_per_pixel, l
     img_idx = int(img_idx)
     height_img = int(height_img)
     width_img = int(width_img)
+    changed_img.add(img_idx)
     delta_intensity = change_lsb(img_idx, height_img, width_img, message, byte_per_pixel, lsm_byte, temp_folder)
     rms += delta_intensity
-  rms = math.sqrt(rms/(info_image['total_image'] * info_image['width'] * info_image['height']))
+  rms = math.sqrt(rms/(len(changed_img) * info_image['width'] * info_image['height']))
   psnr = 20 * math.log10(256/rms)
   # rms_point = rms_point / 
   return (psnr)
