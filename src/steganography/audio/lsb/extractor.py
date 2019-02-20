@@ -57,7 +57,8 @@ class MessageExtractor:
             byte_list = list(range(len(extracted[0])))
             random.shuffle(byte_list)
         else:
-            byte_list = range(len(extracted[0]))
+            if not is_mono:
+                byte_list = range(len(extracted[0]))
 
         # Get all in string format
         if is_mono:
