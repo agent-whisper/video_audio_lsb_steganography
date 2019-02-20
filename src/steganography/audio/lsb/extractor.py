@@ -11,7 +11,7 @@ class MessageExtractor:
         return frame_bytes
     
     # Get LSB from file in string format
-    def get_lsb(self, frame_bytes,key):
+    def get_lsb(self, frame_bytes,key,is_mono):
         
         # Get sign from LSB
         encrypted = bin(frame_bytes[0])[-1] == '1'
@@ -33,13 +33,15 @@ class MessageExtractor:
         if opt==1:
             mod_index = 8
             extracted = [frame_bytes[i] & 1 for i in range(len(frame_bytes))]
-            extracted = tools.split_array(extracted, 4)
+            if not is_mono:
+                extracted = tools.split_array(extracted, 4)
 
         # Extract the 2 LSB of each byte
         if opt==2:
             mod_index = 4
             extracted = [bin(frame_bytes[i] & 3).lstrip('0b').rjust(2,'0') for i in range(len(frame_bytes))]
-            extracted = tools.split_array(extracted, 4)
+            if not is_mono:
+                extracted = tools.split_array(extracted, 4)
 
         # Handling random frame case
         if random_frames:
@@ -55,19 +57,31 @@ class MessageExtractor:
             byte_list = list(range(len(extracted[0])))
             random.shuffle(byte_list)
         else:
-            byte_list = range(len(extracted[0]))
+            if not is_mono:
+                byte_list = range(len(extracted[0]))
 
         # Get all in string format
-        for i in frame_list:
-            for j in byte_list:
-                if i!=0:
+        if is_mono:
+            for i in frame_list:
+                if i>=4:
                     if index % mod_index != (mod_index - 1):
-                        temp += str(extracted[i][j])
+                        temp += str(extracted[i])
                     else:
-                        temp += str(extracted[i][j])
+                        temp += str(extracted[i])
                         string += chr(int(temp,2))
                         temp = ""
                     index += 1
+        else:
+            for i in frame_list:
+                for j in byte_list:
+                    if i!=0:
+                        if index % mod_index != (mod_index - 1):
+                            temp += str(extracted[i][j])
+                        else:
+                            temp += str(extracted[i][j])
+                            string += chr(int(temp,2))
+                            temp = ""
+                        index += 1
         
         # Decrypt if needed
         if encrypted:

@@ -6,7 +6,7 @@ import src.steganography.audio.lsb.extractor as audio_ext
 
 def hide_message(cover_file_dir, secret_message_dir, key, output_filename, is_random_byte, is_random_frame, lsb_bit_mode, encrypt, is_mono):
     e = audio_ins.MessageInserter()
-    frame_bytes = e.read_frame_file(cover_file_dir)
+    frame_bytes = e.read_frame_file(cover_file_dir, is_mono)
     params = e.get_params(cover_file_dir)
     message, ext = e.read_files(secret_message_dir)
 
@@ -37,10 +37,10 @@ def hide_message(cover_file_dir, secret_message_dir, key, output_filename, is_ra
     }
     return result
 
-def extract_message(stegano_audio_dir, key, output_filename):
+def extract_message(stegano_audio_dir, key, output_filename, is_mono):
     d = audio_ext.MessageExtractor()
     filebytes = d.read_encrypted_file(stegano_audio_dir)
-    lsb = d.get_lsb(filebytes,key)
+    lsb = d.get_lsb(filebytes,key,is_mono)
     length, ext = d.get_info_message(lsb)
     complete_output_filename = '{}'.format(output_filename)
     if ext != '':
