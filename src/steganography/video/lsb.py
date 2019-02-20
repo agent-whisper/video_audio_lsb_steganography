@@ -101,8 +101,10 @@ def hide_secret(cover_video_dir, secret_msg_dir, key, output_file_name, lsm_byte
   except OSError:
     utils.remove(HIDE_OUTPUT_FOLDER)
     os.mkdir(HIDE_OUTPUT_FOLDER)
-  call(["ffmpeg", "-i", "{}/%d.png".format(HIDE_TEMP_FOLDER), "-r", str(info_image['fps']), "-i", audio_file, "-vcodec", "png", "{}/{}".format(HIDE_OUTPUT_FOLDER, output_file_name), "-y"],stdout=open(os.devnull, "w"), stderr=STDOUT)
-  
+  if len(os.listdir(AUDIO_TEMP_FOLDER)) != 0:
+    call(["ffmpeg", "-i", "{}/%d.png".format(HIDE_TEMP_FOLDER), "-r", str(info_image['fps']), "-i", audio_file, "-vcodec", "png", "{}/{}".format(HIDE_OUTPUT_FOLDER, output_file_name), "-y"],stdout=open(os.devnull, "w"), stderr=STDOUT)
+  else :
+    call(["ffmpeg", "-i", "{}/%d.png".format(HIDE_TEMP_FOLDER), "-r", str(info_image['fps']), "-vcodec", "png", "{}/{}".format(HIDE_OUTPUT_FOLDER, output_file_name), "-y"],stdout=open(os.devnull, "w"), stderr=STDOUT)
   #add audio to video
   # call(["ffmpeg", "-i", "{}/temp.avi".format(HIDE_TEMP_FOLDER), "-i", audio_file,  "{}/{}".format(HIDE_OUTPUT_FOLDER, output_file_name), "-vcodec", "copy", "-y"],stdout=open(os.devnull, "w"), stderr=STDOUT)
   
